@@ -1,4 +1,3 @@
-
 ---
 title: Getting Started with GitHub Pages
 date: 2025-02-08
