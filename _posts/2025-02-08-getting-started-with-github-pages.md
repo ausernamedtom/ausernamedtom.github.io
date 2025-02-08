@@ -1,7 +1,7 @@
 
 ---
 title: Getting Started with GitHub Pages
-date: 2025-08-02
+date: 2025-02-08
 categories: [Blogging, GitHub Pages]
 tags: [GitHub, Jekyll, Chirpy]
 ---
