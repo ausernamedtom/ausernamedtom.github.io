@@ -9,7 +9,7 @@ categories: [gamedev,devlog,vibe]
 
 [Wikipedia: Vibe Coding](https://en.wikipedia.org/wiki/Vibe_coding)
 
-Below you can see the conversation I had and the result can be found here [Blue City Driving Simulator]()
+Below you can see the conversation I had and the result can be found here [Blue City Driving Simulator](/projects/blue-city-driving-simulator/index.html)
 
 > # Blue City Driving Simulator Development Log
 > 
