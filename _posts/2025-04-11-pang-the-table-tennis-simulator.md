@@ -43,7 +43,7 @@ By setting up this documentation I aimed to create a more maintainable and scala
 
 ## ⏭️ What’s Next?
 
-While the current version of Pang isn’t playable yet, I’m excited to continue refining it. My next steps include:
+While the current version of [Pang](https://github.com/ausernamedtom/pang) isn’t playable yet, I’m excited to continue refining it. My next steps include:
 
 - Better rules to aid Test Driven Development 🧪
 - An actual playable first version 🏓
