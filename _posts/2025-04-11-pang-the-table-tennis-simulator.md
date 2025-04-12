@@ -3,6 +3,7 @@ layout: post
 title: "Pang The Table Tennis Simulator - Attempt #3 At Vibe Coding"
 date: 2025-04-11
 categories: [Game Development, Vibe Coding]
+image: /assets/img/posts/2025-04-11-pang-the-table-tennis-simulator/pang-github-issues.webp
 ---
 
 After experimenting with vibe coding in my first two projects, [The Blue Car Game](https://tomhofman.dev/posts/vibe-coding-let-me-talk-you-through/) and [Baby Simulator](https://github.com/ausernamedtom/baby-simulator), I decided to take on a new challenge: creating a table tennis simulator called **Pang**. This project marks my third attempt at vibe coding, where the goal is to build something fun and creative in a short amount of time.
