@@ -3,6 +3,9 @@ layout: post
 title: "Vibe Coding - Let me talk you through"
 date: 2025-03-15
 categories: [gamedev,devlog,vibe]
+image:
+  path: /assets/img/posts/2025-04-02-vibe-coding-let-me-talk-you-through/blue-car-game.webp
+  alt: A game as the result of a prompt
 ---
 
 > Vibe coding (also vibecoding) is an AI-dependent programming technique where a person describes a problem in a few sentences as a prompt to a large language model (LLM) tuned for coding.
