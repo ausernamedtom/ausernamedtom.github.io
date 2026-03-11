@@ -184,7 +184,7 @@ Interesting concept, but likely **complementary to BDD** rather than a replaceme
 
 ## 🤖 Practical Multi-Agent Architecture
 
-**Speaker:** Geert
+**Speaker:** [Geert van der Cruijsen](https://github.com/Geertvdc)
 
 This talk focused on a practical problem: building AI agents is easy, but **getting multiple agents to cooperate effectively** is much harder.
 
