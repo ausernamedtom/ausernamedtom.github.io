@@ -3,6 +3,7 @@ layout: post
 title: "Pang The Table Tennis Simulator - Attempt #3 At Vibe Coding"
 date: 2025-04-11
 categories: [Game Development, Vibe Coding]
+tags: [vibe-coding, ai, game-development, javascript, github-copilot]
 image:
   path: /assets/img/posts/2025-04-11-pang-the-table-tennis-simulator/pang-github-issues.webp
   alt: GitHub Issues created by the agent before solving problems in code

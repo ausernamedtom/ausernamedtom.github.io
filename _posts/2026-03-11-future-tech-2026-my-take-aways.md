@@ -1,4 +1,10 @@
-# Future Tech 2026 – My Takeaways
+---
+layout: post
+title: "Future Tech 2026 – My Takeaways"
+date: 2026-03-11
+categories: [Conference]
+tags: [conference, ai, dotnet, aspire, robotics, cloud]
+---
 
 Today I attended **Future Tech 2026**, a day packed with talks ranging from robotics and programming languages to AI-driven development and cloud observability.
 

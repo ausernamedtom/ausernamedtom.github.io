@@ -2,7 +2,8 @@
 layout: post
 title: "Vibe Coding - Let me talk you through"
 date: 2025-03-15
-categories: [gamedev,devlog,vibe]
+categories: [Game Development, Vibe Coding]
+tags: [vibe-coding, ai, game-development, javascript]
 image:
   path: /assets/img/posts/2025-04-02-vibe-coding-let-me-talk-you-through/blue-car-game.webp
   alt: A game as the result of a prompt
