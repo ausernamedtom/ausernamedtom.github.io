@@ -180,6 +180,46 @@ Other similar projects mentioned were:
 **Takeaway:**
 Interesting concept, but likely **complementary to BDD** rather than a replacement or taking much of it's place.
 
+---
+
+## 🤖 Practical Multi-Agent Architecture
+
+**Speaker:** [Geert van der Cruijsen](https://github.com/Geertvdc)
+
+This talk focused on a practical problem: building AI agents is easy, but **getting multiple agents to cooperate effectively** is much harder.
+
+The session showed how multi-agent systems can solve real business problems by **splitting responsibilities into small specialized agents**.
+
+### Key ideas
+
+- Keep **agent context small**
+- Prefer **micro-agents with focused responsibilities**
+- Smaller prompts and smaller contexts lead to more reliable behavior
+- Agents should communicate through **clear handovers or workflow steps**
+
+### Demo
+
+The live demo used **n8n** to model a workflow for email processing:
+
+1. A **classification agent** determines whether an email contains an invoice
+2. If classified as an invoice, the workflow **hands over to another step**
+3. The invoice is then **labeled or processed further**
+
+This showed how AI agents can be integrated into **practical automation pipelines**.
+
+### Pitfalls highlighted
+
+One important warning:
+
+> Don't use agents for problems that can already be solved with simple automation.
+
+AI agents introduce complexity, so they should only be used when reasoning or classification is genuinely required.
+
+**Key takeaway:**
+Use tools like **n8n to quickly prototype agent workflows**, but continuously evaluate whether parts of the system should be replaced with **regular deterministic automation** once the workflow stabilizes.
+
+---
+
 ## Final Thoughts
 
 Future Tech 2026 was a **mixed bag of talks**, but the stronger sessions were definitely worth attending.
