@@ -1,0 +1,71 @@
+---
+---
+
+.career-timeline {
+  position: relative;
+  margin: 1.5rem 0 2rem;
+  padding-left: 1.75rem;
+  border-left: 2px solid var(--card-border-color, #e5e5e5);
+
+  .timeline-entry {
+    position: relative;
+    padding-bottom: 2rem;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0.4rem;
+      left: -2.1rem;
+      width: 0.85rem;
+      height: 0.85rem;
+      background: var(--main-bg, #fff);
+      border: 2px solid var(--link-color, #2a408e);
+      border-radius: 50%;
+    }
+  }
+
+  .timeline-dates {
+    margin: 0 0 0.15rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-muted-color, #6b6b6b);
+  }
+
+  .timeline-role {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--heading-color, inherit);
+  }
+
+  .timeline-meta {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+
+    .timeline-company {
+      font-weight: 500;
+    }
+
+    .timeline-location {
+      color: var(--text-muted-color, #6b6b6b);
+    }
+  }
+
+  .timeline-description {
+    margin: 0 0 0.5rem;
+  }
+
+  .timeline-highlights {
+    margin: 0;
+    padding-left: 1.25rem;
+
+    li {
+      margin-bottom: 0.2rem;
+    }
+  }
+}

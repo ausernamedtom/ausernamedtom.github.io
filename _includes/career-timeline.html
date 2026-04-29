@@ -1,0 +1,44 @@
+{%- assign entries = site.data.career -%}
+{%- assign month_names = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec" | split: "," -%}
+
+<section class="career-timeline" aria-label="Career timeline">
+  {%- for entry in entries -%}
+    {%- assign start_parts = entry.start | split: "-" -%}
+    {%- assign start_year = start_parts[0] -%}
+    {%- assign start_month_idx = start_parts[1] | plus: 0 | minus: 1 -%}
+    {%- assign start_label = month_names[start_month_idx] | append: " " | append: start_year -%}
+
+    {%- assign end_raw = entry.end | default: "present" | downcase -%}
+    {%- if end_raw == "present" or end_raw == "" -%}
+      {%- assign end_label = "Present" -%}
+    {%- else -%}
+      {%- assign end_parts = entry.end | split: "-" -%}
+      {%- assign end_year = end_parts[0] -%}
+      {%- assign end_month_idx = end_parts[1] | plus: 0 | minus: 1 -%}
+      {%- assign end_label = month_names[end_month_idx] | append: " " | append: end_year -%}
+    {%- endif -%}
+
+    <article class="timeline-entry">
+      <p class="timeline-dates">{{ start_label }} – {{ end_label }}</p>
+      <h3 class="timeline-role">{{ entry.role }}</h3>
+      <p class="timeline-meta">
+        {%- if entry.company_url -%}
+          <a href="{{ entry.company_url }}" class="timeline-company" rel="noopener" target="_blank">{{ entry.company }}</a>
+        {%- else -%}
+          <span class="timeline-company">{{ entry.company }}</span>
+        {%- endif -%}
+        {%- if entry.location %} <span class="timeline-location">· {{ entry.location }}</span>{%- endif -%}
+      </p>
+      {%- if entry.description %}
+      <p class="timeline-description">{{ entry.description }}</p>
+      {%- endif -%}
+      {%- if entry.highlights and entry.highlights.size > 0 %}
+      <ul class="timeline-highlights">
+        {%- for item in entry.highlights %}
+        <li>{{ item }}</li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </article>
+  {%- endfor -%}
+</section>

@@ -1,0 +1,33 @@
+# Career timeline entries.
+# Order entries newest-first; the timeline renders them in this order.
+#
+# Schema per entry:
+#   role:        Job title (required)
+#   company:     Company name (required)
+#   company_url: External link for the company (optional)
+#   location:    City, Country or "Remote" (optional)
+#   start:       "YYYY-MM" (required)
+#   end:         "YYYY-MM" or "present" (required)
+#   description: 1–2 sentence summary (optional)
+#   highlights:  List of bullet points (optional)
+
+- role: "Your current role"
+  company: "Current Company"
+  company_url:
+  location: "City, Country"
+  start: "2024-01"
+  end: "present"
+  description: "Short summary of what you do here."
+  highlights:
+    - "Notable achievement or project."
+    - "Another highlight."
+
+- role: "Previous role"
+  company: "Previous Company"
+  company_url:
+  location: "City, Country"
+  start: "2020-06"
+  end: "2023-12"
+  description: "Short summary of what you did here."
+  highlights:
+    - "Something you shipped or led."
