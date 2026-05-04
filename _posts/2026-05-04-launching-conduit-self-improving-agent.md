@@ -1,63 +1,91 @@
 ---
 layout: post
-title: "Launching Conduit – A Self-Improving Agent Built on Aider and Qwen2.5-Coder"
+title: "Launching Conduit – A Pluggable Take on OpenAI's Symphony Spec"
 date: 2026-05-04
 categories: [Agent Development, Vibe Coding]
-tags: [conduit, aider, qwen, ai, agents, self-improving, github-issues]
+tags: [conduit, symphony, aider, qwen, ai, agents, self-improving, github-issues]
 ---
 
 > ⚠️ **Placeholder post** – this is an early write-up to mark the launch of **Conduit**. Expect rough edges, missing screenshots, and TODOs scattered throughout. I'll flesh it out once the dust settles.
 
-After spending a year mucking about with vibe coding and _Agent Developed Software_ on projects like [Pang](https://github.com/ausernamedtom/pang) and [Baby Simulator](https://github.com/ausernamedtom/baby-simulator), I kept running into the same wall: the agent could write code, but it couldn't really **own a backlog**. Every session started from zero. Every bug fix needed me to babysit the prompt.
+## 🪦 Where Vibe Coding Took Me
 
-So I built **Conduit** – a small orchestrator whose only job is to read GitHub Issues, hand them to a coding agent, and learn from what comes back.
+I've spent the past year on vibe coding and what I started calling [_Agent Developed Software_](https://tomhofman.dev/posts/pang-the-table-tennis-simulator/) – first with [The Blue Car Game](https://tomhofman.dev/posts/vibe-coding-let-me-talk-you-through/), then [Baby Simulator](https://github.com/ausernamedtom/baby-simulator), then [Pang](https://github.com/ausernamedtom/pang). Each one taught me something. Each one also, eventually, **ran aground**.
 
-## 🚇 What is Conduit?
+The pattern was depressingly consistent:
 
-Conduit is, as the name suggests, a pipe. On one end you have **GitHub Issues** – the ground truth for what should be done. On the other end you have a coding agent – in this case [**Aider**](https://aider.chat/) driving [**Qwen2.5-Coder**](https://github.com/QwenLM/Qwen2.5-Coder) locally.
+- Early sessions felt magical. The agent shipped features faster than I could review them.
+- A few weeks in, the codebase had quietly turned into a **less-than-ideal heap**: duplicated helpers, contradictory abstractions, dead branches the agent forgot it left behind.
+- Maintenance and pruning – the boring parts – fell back to me. Which meant I was **back in the chat window**, doing exactly the work I'd hoped to offload.
 
-In between, Conduit does three things:
+The chat-driven loop is great for the _first_ hundred prompts. It's terrible for the _next_ thousand. Anything that lives only in a conversation evaporates the moment the conversation ends, and that's where the rot comes from.
 
-1. **Triages** – picks the next issue based on labels, age, and an internal priority score.
-2. **Executes** – spins up Aider in a fresh worktree, hands it the issue body, and lets it open a PR.
-3. **Reflects** – reads the outcome (CI result, review comments, whether the PR merged) and writes that signal back into its own playbook.
+So my goal with Conduit is plain: **offset the chat to issues and tasks**. If the next unit of work isn't written down somewhere durable, it shouldn't be done.
 
-That third step is the one I care about most. It's what makes Conduit **self-improving** rather than just _another_ agent runner.
+## 🎼 Conduit is an Implementation of OpenAI's Symphony Spec
+
+Conduit didn't appear out of nowhere. It's an implementation of [**OpenAI's Symphony spec**](https://openai.com/) – the orchestration model that splits agent work into a **tracker** (what should be done), a **runner** (who does it), and a **conductor** (the loop that keeps them honest and learning).
+
+What Symphony gets right, in my opinion:
+
+- It treats the **tracker as ground truth**, not the chat history. Tasks live somewhere queryable.
+- It separates **planning** from **execution** so each can be evaluated on its own merits.
+- It assumes the system will **learn from outcomes**, not just produce them.
+
+What I wanted to change:
+
+> Symphony, as written, is a bit prescriptive about which tracker and which runner you bring. Conduit is a **pluggable** implementation with a deliberately **"limitless" choice of tracker and runner**.
+
+Concretely, that means:
+
+- **Tracker adapters** – GitHub Issues today; Jira, Linear, Trello, GitLab, plain Markdown TODOs, even an RSS feed of bug reports tomorrow. Anything that can express "here is a discrete unit of work" can plug in.
+- **Runner adapters** – Aider + Qwen2.5-Coder is my default; but Claude Code, Cursor's agent, OpenAI's Codex CLI, a remote shell wrapped in a script – all valid runners as long as they can accept a task and return a diff (or a PR, or a patch).
+- **A thin conductor** – Conduit itself is small on purpose. It hands a task from a tracker to a runner, watches the result, and writes a reflection note. That's it.
+
+The point isn't to be clever. The point is that I never want to be _locked_ into one tracker or one model again, because both halves of that stack are moving too fast.
+
+## 🚇 The Default Stack: GitHub Issues + Aider + Qwen2.5-Coder
+
+For the launch, the default wiring is:
+
+- **Tracker:** [GitHub Issues](https://docs.github.com/en/issues) – ubiquitous, free, already where my work lives.
+- **Runner:** [Aider](https://aider.chat/) for git/diff/PR mechanics, driving [Qwen2.5-Coder](https://github.com/QwenLM/Qwen2.5-Coder) locally for the actual code generation.
+- **Conductor:** Conduit, reading issues, dispatching to the runner, capturing outcomes.
+
+A few honest reasons for those defaults:
+
+- **Aider already does the boring parts well** – repo maps, diff application, commit messages, conflict handling. No reason to rebuild any of that.
+- **Qwen2.5-Coder runs locally** – I can iterate on Conduit without burning API credits every time the loop misbehaves. And it misbehaves a lot in the early days.
+- **GitHub Issues is where the work is anyway.** If a task isn't in an issue, Conduit shouldn't know about it.
+
+But none of those choices are load-bearing. Swap the runner for Claude Code, swap the tracker for Linear, and Conduit shouldn't care.
 
 ## 🔁 The Self-Improving Loop
 
-The loop is intentionally boring. No magic. No reinforcement learning rigs. Just a feedback file the agent reads before every run.
+The loop is intentionally boring. No magic. No reinforcement learning rigs. Just a feedback file the runner reads before every task.
 
 ```text
-GitHub Issues  ──►  Conduit Triage  ──►  Aider + Qwen2.5-Coder
-       ▲                                          │
-       │                                          ▼
-   New Issues                              Pull Request
-       │                                          │
-       └────── Reflection Notes  ◄────  CI / Review Outcome
+   Tracker (Issues)  ──►  Conduit  ──►  Runner (Aider + Qwen2.5-Coder)
+          ▲                                          │
+          │                                          ▼
+      New Tasks                              Pull Request / Patch
+          │                                          │
+          └────── Reflection Notes  ◄────  CI / Review Outcome
 ```
 
-Each PR outcome turns into a short reflection note. Things like:
+Each outcome turns into a short reflection note. Things like:
 
 - _"When the issue mentions `_config.yml`, run `bundle exec jekyll build` before opening the PR."_
 - _"Issues labeled `flaky-test` should never be closed without re-running the suite three times."_
 - _"Don't touch `_posts/*.md` front matter unless the issue explicitly says so."_
 
-These notes get appended to a `CONDUIT.md` file in the repo, which Aider loads as part of its context on the next run. Over time the playbook fills up with hard-won lessons, and the agent stops repeating the same mistakes.
+Those notes live in a `CONDUIT.md` file the runner loads as context on the next task. Over time the playbook fills with hard-won lessons, and the system stops repeating the same mistakes.
 
-## 🧩 Why Aider + Qwen2.5-Coder?
+This is the part that addresses the _heap of code_ problem from earlier projects: the lessons no longer live in a chat I closed last week. They live next to the code, in a file the next run will read.
 
-A few honest reasons:
+## 🐛 Walking Through a Task
 
-- **Aider already does the boring parts well.** Git integration, repo maps, diff application, conflict handling. I didn't want to rebuild any of that.
-- **Qwen2.5-Coder runs locally.** I can iterate on Conduit without burning API credits every time the loop misbehaves – and it misbehaves a lot in the early days.
-- **It's good enough at small, well-scoped issues.** Which is exactly what GitHub Issues should be anyway. If an issue is too big for Qwen2.5-Coder, that's a signal the issue needs splitting, not that the model needs upgrading.
-
-The split feels right: Aider is the _hands_, Qwen2.5-Coder is the _brain_, and Conduit is the _project manager_ that makes sure the right hands get the right brain on the right task.
-
-## 🐛 Walking Through a Real Issue
-
-Here's the kind of loop I'm running. Imagine an issue like:
+Imagine an issue like:
 
 > **Title:** Sidebar avatar is blurry on retina displays
 > **Body:** `assets/img/tom256.jpg` is only 256px. On 2x screens it looks fuzzy. Replace with a 512px version and update references if needed.
@@ -65,37 +93,38 @@ Here's the kind of loop I'm running. Imagine an issue like:
 
 What Conduit does:
 
-1. **Triage** picks it up because `good-first-issue` has a high priority score and the body is short and concrete.
-2. **Aider** is launched against a fresh worktree with the issue body as the initial prompt and `CONDUIT.md` preloaded.
-3. **Qwen2.5-Coder** suggests the change, Aider applies the diff, runs the build, and pushes a branch.
+1. **Tracker adapter** picks it up because `good-first-issue` has a high priority score and the body is short and concrete.
+2. **Conduit** spins up the runner against a fresh worktree, with the issue body as the initial prompt and `CONDUIT.md` preloaded.
+3. **Aider + Qwen2.5-Coder** propose the change, apply the diff, run the build, and push a branch.
 4. A PR opens. CI runs. If it passes and gets approved, Conduit logs `outcome: merged` and moves on.
-5. If CI fails, Conduit reads the failure, asks Aider to try again _with the failing log appended_, and gives it up to N retries before tagging the issue `needs-human` and stepping away.
+5. If CI fails, Conduit appends the failing log and asks the runner to try again, up to N retries, before tagging the issue `needs-human` and stepping away.
 
-The important detail: every "needs-human" tag is a learning opportunity. When I fix it manually, Conduit watches the diff I write and adds a reflection note describing what it would have done differently. That note becomes part of the next run's context.
+Every `needs-human` tag is a learning opportunity. When I fix it manually, Conduit reads the diff I wrote and adds a reflection note describing what it would have done differently. That note becomes part of the next run's context.
 
 ## 🚧 What's Not Working Yet
 
-This is where I'm being deliberately unflattering, because I'd rather over-share early than oversell.
+I'd rather over-share early than oversell.
 
-- **Issue scoping is fragile.** If a human writes a vague issue, Conduit happily produces a vague PR. I'm experimenting with a pre-flight step where Conduit asks clarifying questions on the issue itself before queueing it.
-- **Reflection notes drift.** Without pruning, `CONDUIT.md` becomes a wall of contradictory advice. I need a compaction pass – probably another agent whose entire job is curating the playbook.
-- **Local model latency.** Qwen2.5-Coder on my machine is fast enough for one issue at a time, but the whole point of automation is _walking away_. I'll likely move to a beefier host or a hosted endpoint before this is genuinely useful overnight.
-- **No guardrails on destructive changes.** Right now Conduit could, in theory, rewrite history if Aider got creative. There's a hard allowlist of safe operations coming next.
+- **Issue scoping is fragile.** A vague issue produces a vague PR. I want a pre-flight step where Conduit asks clarifying questions on the issue _before_ queueing it.
+- **Reflection notes drift.** Without pruning, `CONDUIT.md` turns into the same _heap_ I was trying to escape. A compaction pass is non-negotiable.
+- **Adapter surface is wide.** Pluggable sounds nice on a slide; in practice the tracker and runner contracts need a lot more sharpening before a third party could implement one without reading the source.
+- **Local model latency.** Qwen2.5-Coder on my machine is fine for one task at a time, but the whole point of automation is _walking away_.
 
 ## ⏭️ What's Next
 
-Short list, in roughly the order I plan to tackle them:
-
 - A proper **playbook compactor** so `CONDUIT.md` stays useful past 50 entries.
-- **Clarifying-question mode** before any issue gets queued.
-- A **dashboard** – even a tiny one – showing which issues are queued, in-flight, or stuck.
-- Trying Conduit on a repo I _don't_ own, to see how it behaves without my mental model backing it up.
-- Writing the **proper** launch post once I've got screenshots, real numbers, and at least one issue-to-merge cycle that didn't need me at all.
+- **Clarifying-question mode** before any task gets queued.
+- A **second tracker adapter** – probably Linear or Jira – so the pluggability claim has actual proof.
+- A **second runner adapter** – likely Claude Code – for the same reason.
+- A **dashboard** showing which tasks are queued, in-flight, or stuck.
+- Writing the **proper** launch post once I've got screenshots, real numbers, and at least one task-to-merge cycle that didn't need me at all.
 
 ## 💡 Final Thoughts
 
-Conduit isn't trying to be a general-purpose agent. It's trying to be the _smallest useful thing_ that turns a GitHub Issues backlog into merged PRs, while quietly getting better at it each week. Aider and Qwen2.5-Coder do the heavy lifting; Conduit just keeps the loop honest.
+Conduit is my attempt to take everything that quietly broke about vibe coding and ADS – the chat amnesia, the code heaps, the maintenance debt – and push it into a structure that **survives the conversation ending**.
 
-If you want to follow along, the repo will go public soon. Until then, this placeholder will have to do.
+It's an implementation of Symphony, not a reinvention of it. The contribution, if there is one, is the **pluggability**: any tracker, any runner, one conductor that learns. The default of GitHub Issues + Aider + Qwen2.5-Coder is just where I happen to start.
+
+If the bet pays off, my chat window goes quiet and my issue tracker gets noisy. That's the trade I want.
 
 Disclaimer: this is a **placeholder** post and parts of it were drafted with AI assistance. Numbers, screenshots, and the link to the public repo will land once Conduit has earned them. 🤖🚇
