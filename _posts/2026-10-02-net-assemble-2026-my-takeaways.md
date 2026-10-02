@@ -1,12 +1,11 @@
 ---
+layout: post
 title: '.NET Assemble 2026 – My Takeaways'
 description: 'Notes from .NET Assemble 2026, with key ideas on AI agents, testing, observability, and developer tools.'
-pubDate: 2026-10-02
+date: 2026-10-02
 categories: [Conference]
 tags: [conference, ai, dotnet, azure, devops]
 ---
-
-# .NET Assemble 2026 – My Takeaways
 
 Yesterday I attended [.NET Assemble 2026](https://netassemble.mstack.nl/), a free afternoon and evening conference in Den Bosch focused on .NET, Azure, DevOps and AI.
 
