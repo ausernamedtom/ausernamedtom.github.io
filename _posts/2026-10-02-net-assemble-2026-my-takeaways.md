@@ -331,7 +331,7 @@ I'm particularly curious whether it helps with questions around impact analysis 
 
 ## 🔐 Zero Trust for Coding Agents
 
-Speaker: [Chiel Kas](https://github.com/Chiel92)
+Speaker: [Chiel Kas](https://cv.ckas.nl/)
 
 This was probably the most important reminder of the day.
 
